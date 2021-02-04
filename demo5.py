@@ -35,40 +35,32 @@ elif conn_type == "https":
     data = s_conn.recv(8192).decode()  # decode request
 # if there's more than 8k of data, and data is not empty, print and grab more data
 # Ensures that if more than 8k data is sent, we recieve more than 8k data back
+    count = 1
+    data2 = ""
     while data != "":
-        data = s_conn.recv(8192).decode()  # grab more data
+        data = s_conn.recv(8192).decode("UTF-8")  # grab more data
+        data2 = data2 + data
+        count += 1
+        
     conn.close()
     list = []
-    data.replace("\n", " ")
-    data.replace("\r", " ")
-    data.replace("\t", " ")
-    for part in data.split(" "):
+    resp = data2
+    
+    resp.replace("\n", " ")
+    resp.replace("\r", " ")
+    resp.replace("\t", " ")
+    for part in resp.split(" "):
         if ".js'" in part or '.js"' in part:
-            pos=1
+            pos = 1
             while not pos == -1:
                 pos = part.find(".js")
                 if not pos == -1:
-                    for i in range(pos+2,0,-1):
-                        if part[i] == '"' or part[i]=="'":
-                            if not (part[i+1:pos+3] in list):
-                                list.append(part[i+1:pos+3])
-                    part = part[pos+3:]
+                    for i in range(pos + 2, 0, -1):
+                        if part[i] == '"' or part[i] == "'":
+                            if not (part[i + 1:pos + 3] in list):
+                                list.append(part[i + 1:pos + 3])
+                    part = part[pos + 3:]
+
     for file in list:
         print(file)
-    print("JS Files found: " + str(len(list)))
-
-    
-        
-#for part in resp.split(" "):
-#    if ".js'" in part or '.js"' in part:
-#        pos = 1
-#        while not pos == -1:
-#            pos = part.find(".js")
-#            if not pos == -1:
-#                for i in range(pos + 2, 0, -1):
-#                    if part[i] == '"' or part[i] == "'":
-#                        if not (part[i + 1:pos + 3] in list):
-#                            list.append(part[i + 1:pos + 3])
-#                part = part[pos + 3:]
-#for file in list:
-#    print(file)
+    #print(list)
