@@ -1,0 +1,61 @@
+yoda - talk, I will
+understand but doesn't seem to follow ordinary rules
+why? because not occuring in correct order
+
+let's say a sentence has two parts (Noun Phrase and Verb Phrase):
+S -> NP VP
+
+NP -> noun
+	could be simple such as just a name (rob)
+	or could contain art adj noun
+VP -> verb
+	Rob slept
+	Rob -> nounprhase, slept -> verb phrase
+NP and VP can be named anything
+
+Math
+
+if just 1 +, could not compute because incomplete
+
+E -> handles + and -
+T -> * and /
+F -> a number
+
+math is recursive
+	in 1 + 2 + 3, we would have to use E several times 
+E -> T + E | T - E | T
+T -> F * T | F / T | F
+
+Example:
+1 * 2 + 3
+
+Start off with non-terminal E 
+
+1 + 2 + 3
+ 
+   E
+T      E
+	
+
+
+(see notes to see diagram)
+
+state = e
+if state == e and input is a number:
+	state = f
+elif state == e and input is a + or -:
+	state = e
+
+valid python
+if x == y:
+	print "Same"
+elif x < y
+	print "Less
+else:
+	print "more"
+
+how do rules look in python?
+
+IFBLK --> if LOGICAL-Expression:\n\tBODY | if LOGICAL: \n\t BODY\n elif LOGICAL: \n\t body 
+
+

@@ -9,11 +9,12 @@ host = url.split("/")[0]
 page = url[len(host):]
 if page == "":
     page = "/"
-req = "GET " + page + " HTTP/1.1 \r\n"
+req = "GET " + page + " HTTP/1.1\r\n"
 req += "Accept-Encoding: identity \r\n"
 req += "Host: " + host + "\r\n"
 req += "Connection: close \r\n\r\n"
 print(req)
+
 # set up IPv4 socket
 conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # if HTTP, make a connection, encode request, send over encoded request,
@@ -28,40 +29,14 @@ if conn_type == "http":
 # use context to wrap socket and check host name in encryption certificate matches host name we access
 # next we connect using new s_conn object created within this elif statement and connect through port 443
 elif conn_type == "https":
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # switch with ssl.PROTOCOL_TLSv1_2 for RIT
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)  # wrapper for a socket
     s_conn = context.wrap_socket(conn, server_hostname=host)  # check host name
     s_conn.connect((host, 443))  # connect using new s_conn object made in previous line
     s_conn.send(req.encode())  # encode data
     data = s_conn.recv(8192).decode()  # decode request
 # if there's more than 8k of data, and data is not empty, print and grab more data
 # Ensures that if more than 8k data is sent, we recieve more than 8k data back
-    count = 1
-    data2 = ""
-    while data != "":
-        data = s_conn.recv(8192).decode()  # grab more data
-        data2 = data2 + data
-        count += 1
-        
-    conn.close()
-    list = []
-    resp = data2
-    
-    resp.replace("\n", " ")
-    resp.replace("\r", " ")
-    resp.replace("\t", " ")
-    for part in resp.split(" "):
-        if ".js'" in part or '.js"' in part:
-            pos = 1
-            while not pos == -1:
-                pos = part.find(".js")
-                print(pos)
-                if not pos == -1:
-                    for i in range(pos + 2, 0, -1): #start at 's' and move backwards until '.'
-                        if part[i] == '"' or part[i] == "'":
-                            #if not (part[i + 1:pos + 3] in list): #if this part is not in the list
-                            list.append(part[i + 1:pos + 3])
-                    part = part[pos + 3:]
-
-    for file in list:
-        print(file)
-    print(len(list))
+while data != "":
+    print(data)
+    data = s_conn.recv(8192).decode()  # grab more data
+conn.close()

@@ -1,17 +1,7 @@
 import socket
 import sys
 import ssl
-"""
-This program makes HTTP requests in python to find external sources 
-on the website.
-
-The HTTP request portion was derived from Professor Olson's tutorial. However, there was
-an issue being able to refer back to data, so data2 is used for later reference.
-
-@author Betsy Visconti (bjv4607@rit.edu)
-"""
-
-
+#import urllib
 data=""
 conn_type = sys.argv[1].split("://")[0]
 url = sys.argv[1].split("//")[1]
@@ -34,8 +24,9 @@ if conn_type == "http":
     print(conn.recv(8192).decode())
     conn.close()
 # If HTTPS, we need set up SSLContext
+# wrapper for a socket declaring which version of SSL we want to use
 # use context to wrap socket and check host name in encryption certificate matches host name we access
-# use new s_conn object created within this elif statement and connect through port 443
+# next we connect using new s_conn object created within this elif statement and connect through port 443
 elif conn_type == "https":
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)  # wrapper for a socket
     s_conn = context.wrap_socket(conn, server_hostname=host)  # check host name
@@ -47,41 +38,29 @@ elif conn_type == "https":
     count = 1
     data2 = ""
     while data != "":
-        data = s_conn.recv(8192).decode(encoding="UTF-8", errors="ignore")  # grab more data
+        data = s_conn.recv(8192).decode("UTF-8")  # grab more data
         data2 = data2 + data
         count += 1
         
     conn.close()
-
     list = []
     resp = data2
+    
     resp.replace("\n", " ")
     resp.replace("\r", " ")
     resp.replace("\t", " ")
-
-    for part in resp.split(" "): 
-        
-        if "//" in part:
-            pos = part.find("//")
-            part = part[pos:] #saves string starting at '//'
-
-            if "https://" in part or "http://" in part:
-                posStart = part.find("http")
-                part = part[posStart:] #saves string starting at 'http'
-
-            for char in part:
-                if (char == '"'):
-                    posEnd = part.find('"')
-                    part = part[:posEnd] #saves string ending at "'" or '"'
-                    if not part in list and not url in part: #checks that link is unique and it is not a url on the host site
-                        list.append(part) 
-                if (char == "'"):
-                    posEnd = part.find("'")
-                    part = part[:posEnd] #saves string ending at "'" or '"'
-                    if not part in list and not url in part: #checks that link is unique and it is not a url on the host site
-                        list.append(part) 
+    for part in resp.split(" "):
+        if ".js'" in part or '.js"' in part:
+            pos = 1
+            while not pos == -1:
+                pos = part.find(".js")
+                if not pos == -1:
+                    for i in range(pos + 2, 0, -1):
+                        if part[i] == '"' or part[i] == "'":
+                            if not (part[i + 1:pos + 3] in list):
+                                list.append(part[i + 1:pos + 3])
+                    part = part[pos + 3:]
 
     for file in list:
         print(file)
-
-    print(len(list))
+    #print(list)
